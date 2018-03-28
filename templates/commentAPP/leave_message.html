@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+{% load static %}
+{% load comment %}
+<html lang="zh-cn"><head>
+  <meta charset="utf-8">
+  <meta name="keywords" content="搜索关键词">
+  <meta name="description" content="网页描述">
+  <meta name="revised" content="最新的页面版本">
+  <!-- 触屏端用的-->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <title>留言区</title>
+</head><body>
+<div class="container">
+<div class="row">
+<form action="{% url 'message' %}" method="post" role="form">
+  {% csrf_token %}
+  {% for i in form %}
+    {{ i.label_tag}}{{ i }}{{ i.errors }}<br/>
+  {% empty %}
+  {% endfor %}
+  <button type="submit" name="submit" value="submit">submit</button>
+</form></div>
+<div class="row">
+  </div>
+
+  {% for message in message_list %}
+  <div class="col">
+    <a href="{{ message.user.get_absolute_url }}"><span>{{ message.user }}</span></a>
+      : {{ message.text }}<button type="button" onclick="createfather({{ message.pk }})">回复</button>
+      <span>创建时间:{{ message.created_time }} 支持数: {{ message.agree }}</span>
+      {% get_father_comment message as reply_list %}
+      {% for j in reply_list %}
+      <div class="col">
+      <a href="{{ j.user.get_absolute_url }}"><span>{{ j.user }}</span></a>
+      : {{ j.text }}<button type="button" onclick="son_to_father({{ j.pk }})">回复</button>
+       <span>创建时间:{{ j.created_time }} 支持数: {{ j.agree }}</span>
+       {% get_son_comment j as son_reply_list %}
+       {% for k in son_reply_list %}
+        <div>
+         <a href="{{ k.user.get_absolute_url }}"><span>{{ k.user }}</span></a>
+         <span>回复:</span>
+         <a href="{{ k.content_object.user.get_absolute_url }}"><span>{{ k.content_object.user }}</span></a>
+              {{ k.text }}
+            <span>创建时间:{{ k.created_time }} 支持数: {{ k.agree }}</span>
+              </div>
+         {% empty %}
+         {% endfor %}
+      </div>
+      {% empty %}
+      {% endfor %}
+  </div>
+  {% empty %}
+  {% endfor %}
+</div>
+<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body></html>

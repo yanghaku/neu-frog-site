@@ -1,0 +1,149 @@
+{% extends 'index.html'%}
+{% load resourcesAPP_tags %}
+{% load comment %}
+{% block title %}{{ article.title }}{% endblock %}
+{% block head %}{{ article.title }}{% endblock %}
+{% block main %}
+    <div>作者: {{ article.user }}</div>
+    <div>创建时间: <time>{{ article.created_time }}</time></div>
+    <div>所属目录: <a href="{{ article.category.get_absolute_url }}">{{ article.category }}</a></div>
+    <div>关联话题: {% get_topic article as topic %}
+            <ul>
+                {% for i in topic %}
+                    <li><a href="{{ i.get_absolute_url }}">{{ i.name }}</a></li>
+                {% empty %}没有话题
+                {% endfor %}
+            </ul>
+    </div>
+    <div>点击量: {{ article.click }}</div>
+    <article>{{ article.text|safe }}</article>
+
+    <div style="border: #d01040 2px solid;font-size: 22px">
+    {% csrf_token %}
+        <label for="comment"></label><textarea name="comment" id="comment" placeholder="输入你的评论吧" required></textarea>
+    <button name="combtn" value="提交评论" type="button" onclick="comment({{ article.pk }})">提交评论</button>
+    </div>
+
+<div id="change"></div>
+<div>
+        {% get_father_comment article as reply_list %}
+        {% for j in reply_list %}
+        <div style="border: #00aa00 1px solid;margin:5px 0 ;font-size: 19px">
+            <a href="{{ j.user.get_absolute_url }}"><span style="font-size: 13px;color: #00aa00">{{ j.user }}</span></a>
+          : {{ j.text }} <button type="button" onclick="create({{ j.pk }})">回复</button>
+            <span class="biao">创建时间:{{ j.created_time }} 支持数: {{ j.agree }}</span>
+            {% get_son_comment j as son_reply_list %}
+            {% for k in son_reply_list %}
+                <div style="font-size: 16px;margin-left: 30px">
+                    <a href="{{ k.user.get_absolute_url }}"><span style="font-size: 13px;color: #00aa00">{{ k.user }}</span></a>
+                    <span class="hui">回复:</span>
+                    <a href="{{ k.content_object.user.get_absolute_url }}"><span style="font-size: 13px;color: #00aa00">{{ k.content_object.user }}</span></a>
+                    {{ k.text }}<button type="button" onclick="createson({{ j.pk }},{{ k.pk }})">回复</button>
+                    <span class="biao">创建时间:{{ k.created_time }} 支持数: {{ k.agree }}</span>
+                </div>
+            {% empty %}
+            {% endfor %}
+        </div>
+        {% empty %}
+        {% endfor %}
+</div>
+<style>a{text-decoration: none;}
+    .hui{
+        color: #516272;
+        font-size: 13px;
+    }
+    .biao{
+        color: #d01040;
+        font-size: 12px;
+        float: right;
+    }
+
+</style>
+<script>
+    function sendd(pk) {
+        var xmlhttp;
+        if (window.XMLHttpRequest) {//code for IE7+ ,Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {//code for IE6,5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        var cs=document.getElementsByTagName("input");
+        var data=cs[2].name+"="+cs[2].value;
+        var a=document.getElementById("reply");
+        data+="&"+a.name+"="+a.value;
+        xmlhttp.open("POST", "../../../comment/sontofather/"+pk.toString()+"/" , true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send(data);
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                document.getElementById("change").innerHTML = xmlhttp.response;
+            }
+        }
+    }
+    function create(pk) {
+        var fa=document.getElementById("change");
+        var input=document.createElement("input");
+        input.type="text";
+        input.name="reply";
+        input.id="reply";
+        var btn=document.createElement("button");
+        btn.onclick=function () { sendd(pk) };
+        btn.innerText="submit";
+        fa.appendChild(input);
+        fa.appendChild(btn);
+    }
+    function sendson(pk,id) {
+        var xmlhttp;
+        if (window.XMLHttpRequest) {//code for IE7+ ,Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {//code for IE6,5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        var cs=document.getElementsByTagName("input");
+        var data=cs[2].name+"="+cs[2].value;
+        var a=document.getElementById("replyson");
+        data+="&"+a.name+"="+a.value;
+        xmlhttp.open("POST", "../../../comment/sontoson/"+pk.toString()+"/"+id.toString()+"/", true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send(data);
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                document.getElementById("change").innerHTML = xmlhttp.response;
+            }
+        }
+    }
+    function createson(pk,id) {
+        var fa=document.getElementById("change");
+        var input=document.createElement("input");
+        input.type="text";
+        input.name="replyson";
+        input.id="replyson";
+        var btn=document.createElement("button");
+        btn.onclick=function (ev) { sendson(pk,id) };
+        btn.innerText="submit";
+        fa.appendChild(input);
+        fa.appendChild(btn);
+    }
+    function comment(pk) {
+        var xmlhttp;
+        if(window.XMLHttpRequest)//code for IE7+ ,Firefox, Chrome, Opera, Safari
+        {
+            xmlhttp=new XMLHttpRequest();
+        }else{//code for IE5,6
+            xmthttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        var cs = document.getElementsByTagName("input");
+        var com=document.getElementById("comment");
+        var father=document.getElementById("change");
+        var postdata=cs[2].name+"="+cs[2].value+"&"+com.name+"="+com.value;
+        xmlhttp.open("POST","../../../comment/comarticle/"+pk.toString()+"/",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send(postdata);
+        xmlhttp.onreadystatechange=function (ev) {
+            if (xmlhttp.readyState===4 && xmlhttp.status===200){
+                father.innerText=xmlhttp.responseText;
+            }
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'registration/userbase.html' %}
+{% block title %}用户信息{% endblock %}
+{% block content %}
+
+    用户名:{{ information.username }}<br/>
+    e-mail:{{ information.email }}<br/>
+    nickname:{{ information.first_name }}<br/>
+    贡献值: {{ information.contribute }}<br/>
+    头像:
+    <img src="../../../{{information.image.url }}" alt="header"/>
+{% endblock %}

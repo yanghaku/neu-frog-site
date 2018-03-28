@@ -1,0 +1,18 @@
+{% extends "registration/userbase.html" %}
+{% block title %}登录{% endblock %}
+{% block head %}登录{% endblock %}
+
+{% block content %}
+   <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            {% for i in form %}
+       <br/>{{ i.label_tag }}{{ i }}{{ i.errors }}{{ i.help_text|safe }}<br/>
+       {% endfor %}
+    <button type="submit" style="background:#ff7dad;cursor:pointer;height:70px;width:150px;font-size:30px;color: blue">确认登录</button>
+    <input type="hidden" name="next" value="{{ next }}"/>
+   </form>
+    <span style="font-size: 18px"><a href="{% url 'password_reset' %}?next={{ next }}" style="color:blue">忘记密码</a></span>
+    <br/>
+    <span style="font-size: 20px">没有帐号?→<a href="{% url 'register' %}?next={{ next }}" style="color:blue;font-size: 28px">去注册</a></span>
+
+{% endblock %}

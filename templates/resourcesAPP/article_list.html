@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block head %}{{ title }}{% endblock %}
+{% block main %}
+    <ul>
+    {% for article in article_list %}
+        <li>
+        <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+        <br/><a href="{{ article.user.get_absolute_url }}">{{ article.user }}</a>
+        {{ article.click }}{{ article.created_time }}
+        </li>
+    {% empty %}没有
+    {% endfor %}
+    </ul>
+{% endblock %}

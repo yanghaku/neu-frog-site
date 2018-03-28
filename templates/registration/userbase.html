@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-cn"><head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+
+</head><body>
+<div style="display: block;margin: 50px auto;width: 800px;font-size: 22px">
+<h1 id="id_head">{% block head %}{% endblock %}</h1>
+
+
+{% block content %}{% endblock %}
+
+<hr/><hr/>
+<div class="foot">
+    <a href="#id_head">返回顶部</a><br/>
+    <strong>written by @neu-frog<br/>Version 1.0.0</strong>
+</div>
+</div>
+</body></html>

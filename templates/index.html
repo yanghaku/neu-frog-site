@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+{% load static %}
+{% load resourcesAPP_tags %}
+<html lang="zh-cn"><head>
+    <meta charset="UTF-8"/>
+    <meta name="keywords" content="搜索关键词" />
+    <meta name="description" content="网页描述" />
+    <meta name="revised" content="最新的页面版本" />
+    <link type="text/css" rel="stylesheet" href="{% static 'resourcesAPP/css/markdown.css' %}"/>
+    <base target="_blank"/>
+    <title>{% block title %}主页{% endblock %}</title>
+    <style>
+        nav{
+            position: fixed;
+            display: block;
+            height: 60px;
+            width: 100%;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            background-color: #1cfffe;
+        }
+        a{color: #00aa00;font-size: 22px;}
+        a :hover{color: red;font-size: 22px;}
+    </style>
+<script>
+        function judge() {
+            var m=document.getElementById("search");
+            if (m.value.length===0) {
+                alert("请输入内容!");
+                return false
+            }
+        }
+        function change() {
+            var f=document.getElementById("search_form");
+            var m=document.getElementById("search");
+            var se=document.getElementById("select");
+            if(se.value==='google'){
+                f.action="https://www.google.com.hk/search";
+                m.name="q"
+            }
+            else {
+                f.action="https://www.baidu.com/s";
+                m.name="wd";
+            }
+        }
+        function add() {
+            var ifm = document.getElementById("id_iframe");
+            ifm.src = "https://www.baidu.com";
+            ifm.style.display = "block";
+        }
+    </script>
+</head><body>
+<nav>
+    <ul style="margin-left:20px">
+        <a href="{% url 'register' %}?next={{ request.path }}" target="_self" style="color: blue;font-size: 20px">注册</a>
+    {% if user.is_authenticated %}
+        <span style="font-size: 18px">欢迎!{{ user.username }}</span>
+        <a href="{% url 'password_change' %}?next={{ request.path }}" target="_self" style="color: green;font-size: 20px">修改密码</a>
+        <a href="{% url 'logout' %}?next={{ request.path }}" target="_self" style="font-size: 20px;color: red">注销</a>
+        <a href="{% url 'profiles' %}">user_information</a><br/>
+    {% else %}
+        <span style="font-size: 18px">您还没有登录,请登录</span>
+        <a href="{% url 'login' %}?next={{ request.path }}" target="_self" style="color: green;font-size: 20px">登录</a>
+        <a href="{% url 'password_reset' %}?next={{ request.path }}" target="_self" style="color: green;font-size: 20px">忘记密码?</a>
+    {% endif %}
+    <a href="{% url 'about' %}">关于我们</a>
+    <a href="{% url 'guide' %}">网站指南</a>
+    <a href="{% url 'message' %}">网站留言</a>
+    </ul>
+</nav>
+
+<div style="display: block;margin: 100px auto;width: 800px;font-size: 22px">
+<h1 id="id_head">{% block head %}主页{% endblock %}</h1>
+
+    <form  role="search" action="https://www.google.com.hk/search" id="search_form" target="_blank" class="form" method="get">
+    <label>站外搜索:
+        <input type="search" class="search" id="search" placeholder="输入关键词" name="q" required/>
+        <select onchange="change()" id="select">
+            <option value="google">google</option>
+            <option value="baidu">baidu</option>
+        </select>
+    </label>
+    <button type="submit" onsubmit="return judge()" class="btn">搜索</button>
+</form>
+
+
+<div>
+    <form role="search" method="get" action="{% url 'haystack_search' %}" target="_blank">
+        <label>站内搜索:
+            <input type="search" name="q" placeholder="搜索" required>
+        </label>
+    <button type="submit">搜索</button>
+</form>
+<h3><a href="{% url 'paste' %}" title="去发帖">去发帖</a></h3>
+{% block main %}{% endblock %}
+</div></div>
+<hr/><hr/>
+{% get_category as category %}
+<ul>
+{% for i in category%}
+    <li><a href="{{ i.get_absolute_url }}">{{ i }}</a></li>
+{% empty %}没有目录
+{% endfor %}
+</ul>
+{% get_all_topic as topic %}
+<ul>
+    {% for i in topic %}
+   <li><a href="{{ i.get_absolute_url }}">{{ i }}</a><span>文章数:{{ i.count }} 浏览量:{{ i.click }}</span></li>
+    {% empty %}没有话题
+    {% endfor %}
+</ul>
+<hr/><hr/>
+<div class="foot">
+    <a href="#id_head" target="_self">返回顶部</a><br/>
+    <strong>written by @neu-frog<br/>Version 1.0.0</strong>
+</div>
+</body></html>

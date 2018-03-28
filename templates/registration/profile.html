@@ -1,0 +1,64 @@
+{% extends 'registration/userbase.html' %}
+{% block title %}用户信息{% endblock %}
+{% block head %}个人中心{% endblock %}
+
+{% block content %}
+<script>
+    window.onload=fill;
+    function fill() {
+        var email = document.getElementById('id_email');
+        var first_name = document.getElementById('id_first_name');
+        email.value = "{{ user.email|safe }}";
+        first_name.value = "{{ user.first_name|safe }}";
+        {{ message|safe }}
+    }
+    function judge() {
+        // 检查文件是否合法
+        var fileObj=event.target.files[0];
+        if (fileObj.size/1024/1024>30){
+            alert("你不能选择大于30M的图片!");
+            document.getElementById("header_file").value="";
+        }
+    }
+    function sub() {
+        // 检查是否有文件
+        if(document.getElementById("header_file").value===""){
+            alert("您还没有选择文件!");
+            return false;
+        }
+        return true;
+    }
+    function replace() {
+        var a=document.getElementById("iframe").contentDocument.body.innerText;
+        if(a===""){return;}
+        var ls=a.split("!");
+        alert(ls[0]+"!");
+        if (ls[0]==="修改成功"){
+        document.getElementById("image").src="../../"+ls[1];}
+        a="";
+    }
+</script>
+
+
+
+<form action="{% url 'profiles' %}" method="post">
+    {% csrf_token %}
+    <h4>在这个页面你可以任意更改自己的信息</h4>
+    用户名:<span>{{ user.username }}"</span><br/>
+    {% for i in form %}
+        {{ i.label_tag }}
+        {{ i }}
+        {{ i.errors }}<br/>
+    {% endfor %}
+    <button type="submit" name="save">保存更改</button><br/></form>
+    贡献值: {{ user.contribute }}<br/>
+    头像:
+    <img id="image" src="../../{{user.image.url }}" alt="header"/>
+    <form enctype="multipart/form-data" onsubmit="return sub()" target="my_iframe" action="{% url 'header_change' %}" method="post">
+        {% csrf_token %}
+        <input id="header_file" type="file" accept="image/*" onchange="judge()" name="image"/>
+        <button type="submit" name="header_btn">更改图片</button>
+    </form>
+    <iframe id="iframe" hidden onload="replace()" name="my_iframe"></iframe>
+
+{% endblock %}

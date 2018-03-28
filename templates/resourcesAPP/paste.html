@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+{% block title %}发帖{% endblock %}
+{% block head %}发帖{% endblock %}
+{% block main %}
+    <form action="{% url 'paste' %}" method="post" role="form" target="_self" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for i in form %}
+        {{ i.label_tag }}{{ i }}{{ i.errors }}<br/>
+    {% endfor %}
+    <input type="file" accept="text/html" name="html"/>
+    <button type="submit" name="提交">提交</button>
+    </form>
+{% endblock %}
