@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -124,8 +125,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 AUTH_USER_MODEL = 'userAPP.User'
 
 # 用户头像等媒体信息
-MEDIA_URL = 'media/'
-MEDIA_ROOT = 'media/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # 检索配置
@@ -139,3 +140,14 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 15
 # 索引的更新设为实时更新
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+
+# 发送邮件的配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.163.com'  # 主机
+# 注意 Port
+EMAIL_PORT = 465   # 端口
+EMAIL_HOST_USER = ''  # 帐号
+EMAIL_HOST_PASSWORD = '' # 密码
+DEFAULT_FROM_EMAIL = r'neu-frog团队 <>'

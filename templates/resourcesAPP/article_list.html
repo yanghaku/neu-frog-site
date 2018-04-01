@@ -1,15 +1,13 @@
-{% extends 'index.html' %}
+{% extends 'base.html' %}
 {% block title %}{{ title }}{% endblock %}
-{% block head %}{{ title }}{% endblock %}
 {% block main %}
-    <ul>
-    {% for article in article_list %}
-        <li>
-        <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
-        <br/><a href="{{ article.user.get_absolute_url }}">{{ article.user }}</a>
-        {{ article.click }}{{ article.created_time }}
-        </li>
-    {% empty %}没有
-    {% endfor %}
-    </ul>
+<h1 class="col text-center">{{ title }}</h1>
+<div class="row"><div class="col-md-5 offset-md-3 col-sm-12">
+<ul class="list-group list-unstyled">{% for article in article_list %}
+<li class="list-group-item">
+<a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+<br/>上传者: <a href="{{ article.user.get_absolute_url }}">{{ article.user }}</a>
+{{ article.created_time }} 浏览量: {{ article.click }}
+</li>
+{% empty %}{% endfor %}</ul><br/><br/><hr/></div></div>
 {% endblock %}

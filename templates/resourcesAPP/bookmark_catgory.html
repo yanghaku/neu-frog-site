@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}书签分类{% endblock %}
+{% block main %}<div class="row">
+<div class="col-md-4 offset-md-4">
+<ul class="list-group"></ul>
+    {% for i in bookmark_category_list %}
+        <li class="list-group-item"><a href="{{ i.get_bookmark_list }}">{{ i }}</a></li>
+    {% empty %}{% endfor %}
+</div></div>
+{% endblock %}

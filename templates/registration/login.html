@@ -1,18 +1,23 @@
 {% extends "registration/userbase.html" %}
 {% block title %}登录{% endblock %}
-{% block head %}登录{% endblock %}
-
 {% block content %}
-   <form action="{% url 'login' %}" method="post">
-            {% csrf_token %}
-            {% for i in form %}
-       <br/>{{ i.label_tag }}{{ i }}{{ i.errors }}{{ i.help_text|safe }}<br/>
-       {% endfor %}
-    <button type="submit" style="background:#ff7dad;cursor:pointer;height:70px;width:150px;font-size:30px;color: blue">确认登录</button>
-    <input type="hidden" name="next" value="{{ next }}"/>
-   </form>
-    <span style="font-size: 18px"><a href="{% url 'password_reset' %}?next={{ next }}" style="color:blue">忘记密码</a></span>
-    <br/>
-    <span style="font-size: 20px">没有帐号?→<a href="{% url 'register' %}?next={{ next }}" style="color:blue;font-size: 28px">去注册</a></span>
-
+<br/><h1>登录</h1>
+<form action="{% url 'login' %}" method="post">
+ {% csrf_token %}
+<div class="col-md-4 offset-md-4 col-sm-10 offset-md-1">
+ {% for i in form %}
+ <br/>{{ i.label_tag }} {{ i }}
+ <span class="text-danger">{{ i.errors }}</span>
+ {% endfor %}
+ <div class="col-md-5 offset-md-4 text-danger">{{ form.non_field_errors }}</div><br/>
+ <button class="btn btn-success btn-lg" type="submit">确认登录</button>
+ <input type="hidden" name="next" value="{{ next }}"/>
+</div></form>
+ <br/><span style="font-size: 18px"><a href="{% url 'password_reset' %}?next={{ next }}" style="color:blue">忘记密码</a></span><br/>
+ <span style="font-size: 20px">没有帐号?→<a href="{% url 'register' %}?next={{ next }}" style="color:blue;font-size: 28px">去注册</a></span>
+{% endblock %}{% block script %}
+<script>window.onload=function () {
+    document.getElementById("id_username").className="form-control";
+    document.getElementById("id_password").className="form-control";
+}</script>
 {% endblock %}

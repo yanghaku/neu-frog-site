@@ -1,11 +1,16 @@
-{% extends 'registration/userbase.html' %}
-{% block title %}用户信息{% endblock %}
-{% block content %}
-
-    用户名:{{ information.username }}<br/>
-    e-mail:{{ information.email }}<br/>
-    nickname:{{ information.first_name }}<br/>
-    贡献值: {{ information.contribute }}<br/>
-    头像:
-    <img src="../../../{{information.image.url }}" alt="header"/>
-{% endblock %}
+{% extends 'base.html' %}
+{% block title %}{{ information.username }} 的信息{% endblock %}
+{% block main %}
+<div class="row">
+<div class="col-12"><br/><br/></div>
+<div class="col-md-3 col-sm-10 offset-md-2 offset-sm-1">
+<img class="img-fluid" src="{{information.image.url }}" alt="header"/>
+</div>
+<div class="col-md-5">
+<ul class="list-group">
+  <li class="list-group-item">用户名: {{ information.username }}</li>
+  <li class="list-group-item">e-mail: {{ information.email }}</li>
+  <li class="list-group-item">nickname: {{ information.first_name }}</li>
+  <li class="list-group-item">贡献值: {{ information.contribute }}</li></ul>
+</div>
+</div>{% endblock %}

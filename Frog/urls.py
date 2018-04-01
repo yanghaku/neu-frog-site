@@ -32,6 +32,7 @@ urlpatterns = [
     path('', re_view.index, name='index'),
     # 搜索模块的url
     re_path(r'^search/', include('haystack.urls')),
+    re_path(r'^index_search/', re_view.index_search, name='index_search'),
     # user模块
     re_path(r'users/', include('userAPP.urls')),
     # 资源分享模块的url

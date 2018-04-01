@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, get_object_or_404
 from resourcesAPP.models import Article
 from commentAPP.models import Message, ReplySon, ReplyFather
 from commentAPP.form import MessageForm
@@ -30,21 +30,19 @@ def message_leave(request):
         form = MessageForm(request.POST)
         if form.is_valid():
             message = form.save(commit=False)
-            form = MessageForm()
             message.user = request.user
             message.save()
             message_list = Message.objects.all()
-            context = {'form': form, 'message_list': message_list}
+            context = {'message_list': message_list}
             return render(request, 'commentAPP/leave_message.html', context)
         else:
             # 返回错误表单
             message_list = Message.objects.all()
-            context = {'form': form, 'message_list': message_list}
+            context = {'message_list': message_list}
             return render(request, 'commentAPP/leave_message.html', context)
     else:
-        form = MessageForm()
         message_list = Message.objects.all()
-        context = {'form': form, 'message_list': message_list}
+        context = {'message_list': message_list}
         return render(request, 'commentAPP/leave_message.html', context)
 
 
@@ -58,15 +56,15 @@ def father_to_article(request):
     text = request.POST.get('reply', '')
     pk = request.POST.get('pk', None)
     if text == "":
-        return HttpResponse("评论不能为空!")
+        return HttpResponse("Error", status=403)
     if pk:
         ReplyFather.objects.create(user=request.user,
                                    object_pk=pk,
                                    content_type=ContentType.objects.get_for_model(Article),
                                    text=text)
-        return HttpResponse("ok!")
+        return HttpResponse(request.user.image.url, status=200)
     else:
-        return HttpResponse("Error")
+        return HttpResponse("Error", staus=403)
 
 
 @require_POST
@@ -76,15 +74,15 @@ def father_to_message(request):
     text = request.POST.get("reply", '')
     pk = request.POST.get('pk', None)
     if text == "":
-        return HttpResponse("评论不能为空!")
+        return HttpResponse("评论不能为空!", status=403)
     if pk:
         ReplyFather.objects.create(user=request.user,
                                    text=text,
                                    content_type=ContentType.objects.get_for_model(Message),
                                    object_pk=pk)
-        return HttpResponse("ok!")
+        return HttpResponse(request.user.get_absolute_url())
     else:
-        return HttpResponse("Error")
+        return HttpResponse("Error", status=403)
 
 
 @login_required(login_url='login')
@@ -94,16 +92,16 @@ def son_to_father(request):
     text = request.POST.get('reply', '')
     pk = request.POST.get('pk', None)
     if text == '':
-        return HttpResponse("评论不能为空!")
+        return HttpResponse("评论不能为空!", status=403)
     if pk:
         ReplySon.objects.create(father_id=pk,
                                 content_type=ContentType.objects.get_for_model(ReplyFather),
                                 object_pk=pk,
                                 user=request.user,
                                 text=text)
-        return HttpResponse("pk")
+        return HttpResponse("ok")
     else:
-        return HttpResponse("Error")
+        return HttpResponse("Error", status=403)
 
 
 @login_required(login_url="login")
@@ -114,7 +112,7 @@ def son_to_son(request):
     pk = request.POST.get('pk', None)
     pkk = request.POST.get('pkk', None)
     if text == '':
-        return HttpResponse(u"评论不能为空!")
+        return HttpResponse(u"评论不能为空!", status=403)
     if pk and pkk:
         ReplySon.objects.create(father_id=pk,
                                 content_type=ContentType.objects.get_for_model(ReplySon),
@@ -123,4 +121,52 @@ def son_to_son(request):
                                 text=text)
         return HttpResponse("ok")
     else:
-        return HttpResponse("Error")
+        return HttpResponse("Error", status=403)
+
+
+@login_required(login_url='login')
+@require_GET
+# 留言赞或者反对
+def message_agree(request, pk, dis):
+    mess = get_object_or_404(Message, pk=pk)
+    if dis == '1':
+        agree = mess.agree+1
+        Message.objects.filter(pk=pk).update(agree=agree)
+    elif dis == '0':
+        disagree = mess.disagree+1
+        Message.objects.filter(pk=pk).update(disagree=disagree)
+    else:
+        return HttpResponse("error", status=404)
+    return HttpResponse("ok", status=200)
+
+
+@login_required(login_url='login')
+@require_GET
+# 一级评论的赞成或反对
+def reply_father_agree(request, pk, dis):
+    reply = get_object_or_404(ReplyFather, pk=pk)
+    if dis == '1':
+        agree = reply.agree+1
+        ReplyFather.objects.filter(pk=pk).update(agree=agree)
+    elif dis == '0':
+        disagree = reply.disagree+1
+        ReplyFather.objects.filter(pk=pk).update(disagree=disagree)
+    else:
+        return HttpResponse("error", status=404)
+    return HttpResponse("ok", status=200)
+
+
+@login_required(login_url='login')
+@require_GET
+# 二级评论的赞成或反对
+def reply_son_agree(request, pk, dis):
+    reply = get_object_or_404(ReplySon, pk=pk)
+    if dis == '1':
+        agree = reply.agree+1
+        ReplySon.objects.filter(pk=pk).update(agree=agree)
+    elif dis == '0':
+        disagree = reply.disagree+1
+        ReplySon.objects.filter(pk=pk).update(disagree=disagree)
+    else:
+        return HttpResponse("error", status=404)
+    return HttpResponse("ok", status=200)

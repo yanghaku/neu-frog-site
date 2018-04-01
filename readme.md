@@ -3,6 +3,9 @@
 
 | 前端语言 |  后端语言|
 |---|---|
-| html, css, js| python-django-2.0.3|
+| html, css, js| python3-django-2.0.3|
+
+python第三方库有:haystack jieba中文分词  markdown
+
 
 正在完善中.......

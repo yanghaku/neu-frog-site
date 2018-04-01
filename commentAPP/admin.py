@@ -9,13 +9,13 @@ class MessageAdmin(admin.ModelAdmin):
 
 
 class ReplyFatherAdmin(admin.ModelAdmin):
-    list_display = ['user', 'created_time', 'text', 'agree']
+    list_display = ['user', 'created_time', 'text', 'agree', 'content_type']
     list_filter = ['user', 'created_time']
 
 
 class ReplySonAdmin(admin.ModelAdmin):
     list_filter = ['user', 'created_time', 'father']
-    list_display = ['user', 'created_time', 'text', 'agree']
+    list_display = ['user', 'created_time', 'text', 'agree', 'content_type']
 
 
 admin.site.register(Message, MessageAdmin)

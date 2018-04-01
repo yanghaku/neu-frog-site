@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}书签列表{% endblock %}
+{% block main %}
+<div class="col-12 text-center">
+<ul class="list-group list-unstyled">{% for i in bookmark_list %}
+    <li class="list-group-item"><a href="{{ i.url }}">{{ i }}</a>
+        <p style="word-break: break-all">简介: {{ i.description }}</p>
+    上传者:<a href="{{ i.user.get_absolute_url }}">{{ i.user }}</a>
+    </li>
+{% empty %}{% endfor %}</ul></div>
+{% endblock %}

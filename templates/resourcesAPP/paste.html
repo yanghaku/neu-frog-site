@@ -1,13 +1,31 @@
-{% extends 'index.html' %}
+{% extends 'base.html' %}
 {% block title %}发帖{% endblock %}
-{% block head %}发帖{% endblock %}
-{% block main %}
-    <form action="{% url 'paste' %}" method="post" role="form" target="_self" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% for i in form %}
-        {{ i.label_tag }}{{ i }}{{ i.errors }}<br/>
-    {% endfor %}
-    <input type="file" accept="text/html" name="html"/>
-    <button type="submit" name="提交">提交</button>
-    </form>
-{% endblock %}
+{% block main %}<br/><h1 class="text-center">发帖</h1>
+<div class="row">
+<div class="col-md-6 offset-md-3 text-center">
+<form action="{% url 'paste' %}" method="post" role="form" target="_self" enctype="multipart/form-data">
+<div class="form-group row">
+  <label for="id_category" class="col-form-label">请先选择类型</label>{{ form.category }}
+   <br/><small class="text-danger">{{ form.category.errors }}</small>
+</div><div class="form-group row">{% csrf_token %}
+  <label for="id_title" class="col-form-label">标题: </label>{{ form.title }}
+   <br/><small class="text-danger">{{ form.title.errors }}</small>
+</div><div class="form-group row">
+  <label for="id_text" class="col-form-label">正文: </label>{{ form.text }}
+   <br/><small class="text-danger">{{ form.text.errors }}</small>
+</div><div class="form-group row">
+  <label for="id_topic" class="col-form-label">话题(多选): </label>{{ form.topic }}
+   <br/><small class="text-danger">{{ form.topic.errors }}</small>
+</div><div class="form-group row">
+  <label for="id_file" class="col-form-label">书签文件(可选)</label><input id="id_file" class="form-control form-control-file" type="file" accept="text/html" name="html"/>
+</div>
+<button type="submit" class="btn btn-info btn-lg" name="提交">提交</button>
+</form></div></div><br/><br/>{% endblock %}
+{% block script %}<script>
+window.onload=function () {
+    document.getElementById("id_title").className="form-control";
+    document.getElementById("id_text").className="form-control form-text";
+    document.getElementById("id_category").className="form-control";
+    document.getElementById("id_topic").className="form-control";
+}
+</script>{% endblock %}

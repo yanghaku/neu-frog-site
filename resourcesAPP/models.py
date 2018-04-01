@@ -67,6 +67,9 @@ class BookCategory(models.Model):
     def __str__(self):
         return self.name
 
+    def get_bookmark_list(self):
+        return reverse('bookmark_list', kwargs={'pk': self.pk})
+
 
 # 5.标准书签
 class BookMark(models.Model):

@@ -1,123 +1,28 @@
-<!DOCTYPE html>
-{% load static %}
-{% load highlight %}
-<html lang="zh-cn"><head>
-    <meta charset="UTF-8"/>
-    <meta name="keywords" content="搜索关键词" />
-    <meta name="description" content="网页描述" />
-    <meta name="revised" content="最新的页面版本" />
-    <base target="_blank"/>
-    <title>站内搜索-{{ query }}</title>
-    <style>
-        nav{
-            position: fixed;
-            display: block;
-            height: 60px;
-            width: 100%;
-            z-index: 999;
-            top: 0;
-            left: 0;
-            background-color: #1cfffe;
-        }
-        a{color: #00aa00;font-size: 22px;}
-        a :hover{color: red;font-size: 22px;}
-        span.highlighted{color: red;}
-    </style>
-<script>
-        function judge() {
-            var m=document.getElementById("search");
-            if (m.value.length===0) {
-                alert("请输入内容!");
-                return false
-            }
-        }
-        function change() {
-            var f=document.getElementById("search_form");
-            var m=document.getElementById("search");
-            var se=document.getElementById("select");
-            if(se.value==='google'){
-                f.action="https://www.google.com.hk/search";
-                m.name="q"
-            }
-            else {
-                f.action="https://www.baidu.com/s";
-                m.name="wd";
-            }
-        }
-    </script>
-</head><body>
-<nav>
-    <ul style="margin-left:20px">
-        <a href="{% url 'register' %}?next={{ request.path }}" target="_self" style="color: blue;font-size: 20px">注册</a>
-    {% if user.is_authenticated %}
-        <span style="font-size: 18px">欢迎!{{ user.username }}</span>
-        <a href="{% url 'password_change' %}?next={{ request.path }}" target="_self" style="color: green;font-size: 20px">修改密码</a>
-        <a href="{% url 'logout' %}?next={{ request.path }}" target="_self" style="font-size: 20px;color: red">注销</a>
-        <a href="{% url 'profiles' %}">user_information</a><br/>
-    {% else %}
-        <span style="font-size: 18px">您还没有登录,请登录</span>
-        <a href="{% url 'login' %}?next={{ request.path }}" target="_self" style="color: green;font-size: 20px">登录</a>
-        <a href="{% url 'password_reset' %}?next={{ request.path }}" target="_self" style="color: green;font-size: 20px">忘记密码?</a>
-    {% endif %}
-    </ul>
-</nav>
-
-<div style="display: block;margin: 100px auto;width: 800px;font-size: 22px">
-<h1 id="id_head">{{ query }} 的搜索结果</h1>
-
-    <form  role="search" action="https://www.google.com.hk/search" id="search_form" target="_blank" class="form" method="get">
-    <label>站外搜索:
-        <input type="search" class="search" id="search" placeholder="输入关键词" name="q" required/>
-        <select onchange="change()" id="select">
-            <option value="google">google</option>
-            <option value="baidu">baidu</option>
-        </select>
-    </label>
-    <button type="submit" onsubmit="return judge()" class="btn">搜索</button>
-</form>
-
-
-<div>
-    <form role="search" method="get" action="{% url 'haystack_search' %}">
-        <label>站内搜索:
-            <input type="search" name="q" value="{{ query }}" required>
-        </label>
-    <button type="submit">搜索</button>
-</form>
-</div>
-<h1>{{ result.count }}</h1>
-<div>
+{% extends 'base.html' %}{% load static %}{% load highlight %}
+{% block title %}站内搜索_{{ query }}{% endblock %}
+{% block head %}
+<meta name="keywords" content="书签有路 站内搜索结果 {{ query }}" />
+<style>a{color: #00aa00;}.highlighted{color: #d01040;}</style>
+{% endblock %}{% block main %}
+<h1 class="col text-center">{{ query }} 的搜索结果</h1>
+<div class="col-md-5 offset-md-3">
 {% if query %}
-    <ul>
-    {% for result in page.object_list %}
-        <li>
-        <h4><a href="{{ result.object.url}}">{% highlight result.object.title with query %}</a></h4>
-        <p>简介:{% highlight result.object.description with query %}</p>
-        <span>上传者:<a href="{{ result.object.user.get_absolute_url }}">{{ result.object.user }}</a></span>
-        <span>所属文章:<a href="{{ result.object.article.get_absolute_url }}">{{ result.object.article }}</a></span>
-        </li>
-
-    {% empty %}没有搜索到你想要的结果
-    {% endfor %}
-    </ul>
-    {% if page.has_previous or page.has_next %}
-        <div>
-        {% if page.has_previous %}
+  <ul class="list-group">
+  {% for result in page.object_list %}<li class="list-group-item">
+  <h4><a href="{{ result.object.url}}">{% highlight result.object.title with query %}</a></h4>
+  <p>简介:{% highlight result.object.description with query %}</p>
+  <span>上传者:<a href="{{ result.object.user.get_absolute_url }}">{{ result.object.user }}</a></span>
+  <span>所属文章:<a href="{{ result.object.article.get_absolute_url }}">{{ result.object.article }}</a></span>
+  </li>{% empty %}没有搜索到你想要的结果{% endfor %}</ul>
+  {% if page.has_previous or page.has_next %}
+  <div>
+  {% if page.has_previous %}
 <a href="?q={{ query }}&amp;page={{ page.previous_page_number }}" target="_self">&laquo;Previous</a>
-        {% endif %}
+  {% endif %}
     |{% if page.has_next %}
 <a href="?q={{ query }}&amp;page={{ page.next_page_number }}" target="_self">Next&raquo;</a>
-        {% endif %}
-        </div>
-    {% endif %}
-{% else %}请输入关键词
-{% endif %}
-
-</div>
-</div>
-<hr/><hr/>
-<div class="foot">
-    <a href="#id_head">返回顶部</a><br/>
-    <strong>written by @neu-frog<br/>Version 1.0.0</strong>
-</div>
-</body></html>
+   {% endif %}
+  </div>
+  {% endif %}
+{% else %}请输入关键词{% endif %}</div>
+{% endblock %}

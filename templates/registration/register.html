@@ -1,39 +1,64 @@
 {% extends 'registration/userbase.html' %}
 {% block title %}注册{% endblock %}
-{% block head %}注册{% endblock %}
 {% block content %}
-    <form enctype="multipart/form-data" onsubmit="return sub()" action="{% url 'register' %}" method="post">
-        {% csrf_token %}
-        {% for i in form %}
-            {{ i.label_tag }}
-            {{ i }}
-            {{ i.errors }}
-        {% empty %}
-        {% endfor %}
-        <button type="submit">提交</button>
-        <input type="hidden" name="next" value="{{ next }}"/>
-   </form>
-
-    <br/>
-    <span style="font-size: 20px">已有帐号?→<a href="{% url 'login' %}?next={{ next }}" style="color:blue;font-size: 28px">去登录</a></span>
-
-
-    <script>
-    document.getElementById("id_image").onchange= function(event) {
-        // 检查文件是否合法
-        var file=event.target.files[0];
-        if (file.size/1024/1024>50){
-            alert("你不能选择大于50M的图片!");
-            document.getElementById("id_image").value="";
-        }
-    };
-    function sub() {
-        // 检查是否有文件
-        if(document.getElementById("header_file").value===""){
-            alert("您还没有选择文件!");
-            return false;
-        }
-        return true;
-    }
-</script>
+<br/><h1>注册</h1><br/>
+<div class="col-md-5 offset-md-3">
+<form enctype="multipart/form-data" onsubmit="return sub()" action="{% url 'register' %}" method="post">
+  {% csrf_token %}
+  <div class="form-group row">
+    <label for="id_username" class="col-sm-3 col-form-label">用户名</label>
+    <div class="col-sm-9">{{ form.username }}</div>
+    <span class="text-danger">{{ form.username.errors }}</span>
+  </div><div class="form-group row">
+    <label for="id_first_name" class="col-sm-3 col-form-label">nickname</label>
+    <div class="col-sm-9">{{ form.first_name }}</div>
+    <span class="text-danger">{{ form.first_name.errors }}</span>
+  </div><div class="form-group row">
+    <label for="id_email" class="col-sm-3 col-form-label">电子邮件地址</label>
+    <div class="col-sm-9">{{ form.email }}<br/>
+    <span class="text-danger">{{ form.email.errors }}</span>
+    <small style="color: #d01040"><strong>请确保电子邮件有效,在忘记密码的时候可以随时找回</strong></small></div>
+  </div><div class="form-group row">
+    <label for="id_image" class="col-sm-3 col-form-label">头像 <small> (可选)</small></label>
+    <div class="col-sm-9 form-control-file">{{ form.image }}</div>
+    <span class="text-danger">{{ form.image.errors }}</span>
+  </div><div class="form-group row">
+    <label for="id_password1" class="col-sm-3 col-form-label">密码</label>
+    <div class="col-sm-9">{{ form.password1 }}</div>
+    <span class="text-danger">{{ form.password1.errors }}</span>
+  </div><div class="form-group row">
+    <label for="id_password2" class="col-sm-3 col-form-label">密码确认</label>
+    <div class="col-sm-9">{{ form.password2 }}</div>
+    <span class="text-danger">{{ form.password2.errors }}</span><br/>
+  </div>
+  <button type="submit" class="btn btn-success btn-lg">提交</button>
+<input type="hidden" name="next" value="{{ next }}"/>
+</form></div>
+<br/>
+<span style="font-size: 20px">已有帐号?→<a href="{% url 'login' %}?next={{ next }}" style="color:blue;font-size: 28px">去登录</a></span><br/>
 {% endblock %}
+{% block script %}
+<script>
+window.onload=function () {
+  document.getElementById("id_username").className="form-control";
+  document.getElementById("id_first_name").className="form-control";
+  document.getElementById("id_email").className="form-control";
+  document.getElementById("id_image").className="form-control";
+  document.getElementById("id_password1").className="form-control";
+  document.getElementById("id_password2").className="form-control";
+};
+document.getElementById("id_image").onchange= function(event) {//检查文件是否合法
+    var file=event.target.files[0];
+    if (file.size/1024/1024>50){
+        alert("你不能选择大于50M的图片!");
+        document.getElementById("id_image").value="";
+    }
+};
+function sub() {// 检查是否有文件
+    if(document.getElementById("header_file").value==="") {
+        alert("您还没有选择文件!");
+        return false;
+    }
+    return true;
+}
+</script>{% endblock %}

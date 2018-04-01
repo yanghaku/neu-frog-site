@@ -1,149 +1,71 @@
-{% extends 'index.html'%}
-{% load resourcesAPP_tags %}
-{% load comment %}
-{% block title %}{{ article.title }}{% endblock %}
-{% block head %}{{ article.title }}{% endblock %}
-{% block main %}
-    <div>作者: {{ article.user }}</div>
-    <div>创建时间: <time>{{ article.created_time }}</time></div>
-    <div>所属目录: <a href="{{ article.category.get_absolute_url }}">{{ article.category }}</a></div>
-    <div>关联话题: {% get_topic article as topic %}
-            <ul>
-                {% for i in topic %}
-                    <li><a href="{{ i.get_absolute_url }}">{{ i.name }}</a></li>
-                {% empty %}没有话题
-                {% endfor %}
-            </ul>
-    </div>
-    <div>点击量: {{ article.click }}</div>
-    <article>{{ article.text|safe }}</article>
-
-    <div style="border: #d01040 2px solid;font-size: 22px">
-    {% csrf_token %}
-        <label for="comment"></label><textarea name="comment" id="comment" placeholder="输入你的评论吧" required></textarea>
-    <button name="combtn" value="提交评论" type="button" onclick="comment({{ article.pk }})">提交评论</button>
-    </div>
-
-<div id="change"></div>
-<div>
-        {% get_father_comment article as reply_list %}
-        {% for j in reply_list %}
-        <div style="border: #00aa00 1px solid;margin:5px 0 ;font-size: 19px">
-            <a href="{{ j.user.get_absolute_url }}"><span style="font-size: 13px;color: #00aa00">{{ j.user }}</span></a>
-          : {{ j.text }} <button type="button" onclick="create({{ j.pk }})">回复</button>
-            <span class="biao">创建时间:{{ j.created_time }} 支持数: {{ j.agree }}</span>
-            {% get_son_comment j as son_reply_list %}
-            {% for k in son_reply_list %}
-                <div style="font-size: 16px;margin-left: 30px">
-                    <a href="{{ k.user.get_absolute_url }}"><span style="font-size: 13px;color: #00aa00">{{ k.user }}</span></a>
-                    <span class="hui">回复:</span>
-                    <a href="{{ k.content_object.user.get_absolute_url }}"><span style="font-size: 13px;color: #00aa00">{{ k.content_object.user }}</span></a>
-                    {{ k.text }}<button type="button" onclick="createson({{ j.pk }},{{ k.pk }})">回复</button>
-                    <span class="biao">创建时间:{{ k.created_time }} 支持数: {{ k.agree }}</span>
-                </div>
-            {% empty %}
-            {% endfor %}
-        </div>
-        {% empty %}
-        {% endfor %}
+{% extends 'base.html'%}{% load resourcesAPP_tags %}{% load comment %}{% load static %}
+{% block title %}{{ article.title }}{% endblock %}{% block main %}
+<div class="row"><a hidden id="username" title="{{ user.contribute }}" href="{{ user.get_absolute_url }}">{{ user.username }}</a>
+<div class="col-md-8 col-sm-12"><!--左边栏-->
+<div class="row">
+  <h1 class="col-12 text-center">{{ article.title }}</h1>
+  <div class="col-2"><img class="img-fluid" src="{{ article.user.image.url }}" alt="头像"></div>
+  <div class="col-10">发布者: <a href="{{ article.user.get_absolute_url }}">{{ article.user }}</a> <time>{{ article.created_time }}</time><br/>
+  浏览量: {{ article.click }}<br/>
+  类别: <a href="{{ article.category.get_absolute_url }}">{{ article.category }}</a><br/>
+  {% get_topic article as topic %}
+  <ul class="list-unstyled list-inline"><li class="list-inline-item">涉及话题:</li>
+  {% for i in topic %}<li class="list-inline-item"><a href="{{ i.get_absolute_url }}">{{ i.name }}</a></li>
+  {% empty %}{% endfor %}</ul><hr/></div>
+  <div class="col-sm-12 col-md-11 offset-md-1">
+  <article>{{ article.text|safe }}</article><br/><hr/>
+</div></div>
+<div class="row">{% csrf_token %}
+  <div class="col-11 text-center">
+  <label for="reply"></label><textarea class="form-control form-text" rows="4" name="reply" id="reply" placeholder="输入你的评论吧" required></textarea>
+  <br/><button class="btn btn-success" type="button" onclick="send_father({{ article.pk }})">提交评论</button>
+  </div></div><br/><span id="comment_start"></span>
+{% get_father_comment article as reply_father_list %}
+{% for reply_father in reply_father_list %}
+<div class="row" style="border: #00aa00 solid 1px;margin-bottom: 8px">
+<div class="col-2 text-center" style="border-right: #d01040 dotted 1px;padding-top: 4px">
+<a href="{{ reply_father.user.get_absolute_url }}"><img class="img-fluid rounded-circle" src="{{ reply_father.user.image.url }}">{{ reply_father.user }}</a>
+<br/><small>贡献数:{{ reply_father.user.contribute }}</small>
 </div>
-<style>a{text-decoration: none;}
-    .hui{
-        color: #516272;
-        font-size: 13px;
-    }
-    .biao{
-        color: #d01040;
-        font-size: 12px;
-        float: right;
-    }
+<div class="col-10"><br/>
+  <p style="word-break: break-all">{{ reply_father.text }}</p><br/><hr/>
+  <div class="col-12 text-right" style="margin-bottom: 6px">
+    <button class="btn " title="回复" value="0" onclick="create_father_text(this,{{ reply_father.pk }})" type="button"><i class="fa fa-comment"> 回复</i></button>
+    <button class="btn " title="支持" onclick="agree(this,{{ reply_father.pk }},'1')" type="button"><i class="fa fa-thumbs-up">{{ reply_father.agree }}</i></button>
+    <button class="btn " title="反对" onclick="disagree(this,{{ reply_father.pk }},'1')" type="button"><i class="fa fa-thumbs-down">{{ reply_father.disagree }}</i></button>
+    <small>{{ reply_father.created_time }}</small>
+  </div>
+  <div class="col-12">
+  {% get_son_comment reply_father as son_reply_list %}
+  {% for reply_son in son_reply_list %}
+  <div style="background-color: #eeeeee">
+    <small><a href="{{ reply_son.user.get_absolute_url }}">@{{ reply_son.user }}</a> 回复:
+    <a href="{{ reply_son.content_object.user.get_absolute_url }}">@{{ reply_son.content_object.user }}</a></small>
+    <span style="word-break: break-all">{{ reply_son.text }}</span>
+  <div class="col text-right">
+  <button class="btn btn-sm" type="button" value="0" onclick="create_son_text(this,{{ reply_father.pk }},{{ reply_son.pk }})"><i class="fa fa-comment-alt "></i></button>
+  <button class="btn btn-sm" title="支持" onclick="agree(this,{{ reply_son.pk }},'2')" type="button"><i class="fa fa-thumbs-up">{{ reply_son.agree }}</i></button>
+  <button class="btn btn-sm" title="反对" onclick="disagree(this,{{ reply_son.pk }},'2')" type="button"><i class="fa fa-thumbs-down">{{ reply_son.disagree }}</i></button>
+      <small>{{ reply_son.created_time }}</small></div>
+  </div><hr style="margin: 1px"/>
+  {% empty %}{% endfor %}</div>
+</div></div>
+{% empty %}{% endfor %}</div>
 
-</style>
-<script>
-    function sendd(pk) {
-        var xmlhttp;
-        if (window.XMLHttpRequest) {//code for IE7+ ,Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        } else {//code for IE6,5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        var cs=document.getElementsByTagName("input");
-        var data=cs[2].name+"="+cs[2].value;
-        var a=document.getElementById("reply");
-        data+="&"+a.name+"="+a.value;
-        xmlhttp.open("POST", "../../../comment/sontofather/"+pk.toString()+"/" , true);
-        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xmlhttp.send(data);
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-                document.getElementById("change").innerHTML = xmlhttp.response;
-            }
-        }
-    }
-    function create(pk) {
-        var fa=document.getElementById("change");
-        var input=document.createElement("input");
-        input.type="text";
-        input.name="reply";
-        input.id="reply";
-        var btn=document.createElement("button");
-        btn.onclick=function () { sendd(pk) };
-        btn.innerText="submit";
-        fa.appendChild(input);
-        fa.appendChild(btn);
-    }
-    function sendson(pk,id) {
-        var xmlhttp;
-        if (window.XMLHttpRequest) {//code for IE7+ ,Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        } else {//code for IE6,5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        var cs=document.getElementsByTagName("input");
-        var data=cs[2].name+"="+cs[2].value;
-        var a=document.getElementById("replyson");
-        data+="&"+a.name+"="+a.value;
-        xmlhttp.open("POST", "../../../comment/sontoson/"+pk.toString()+"/"+id.toString()+"/", true);
-        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xmlhttp.send(data);
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-                document.getElementById("change").innerHTML = xmlhttp.response;
-            }
-        }
-    }
-    function createson(pk,id) {
-        var fa=document.getElementById("change");
-        var input=document.createElement("input");
-        input.type="text";
-        input.name="replyson";
-        input.id="replyson";
-        var btn=document.createElement("button");
-        btn.onclick=function (ev) { sendson(pk,id) };
-        btn.innerText="submit";
-        fa.appendChild(input);
-        fa.appendChild(btn);
-    }
-    function comment(pk) {
-        var xmlhttp;
-        if(window.XMLHttpRequest)//code for IE7+ ,Firefox, Chrome, Opera, Safari
-        {
-            xmlhttp=new XMLHttpRequest();
-        }else{//code for IE5,6
-            xmthttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        var cs = document.getElementsByTagName("input");
-        var com=document.getElementById("comment");
-        var father=document.getElementById("change");
-        var postdata=cs[2].name+"="+cs[2].value+"&"+com.name+"="+com.value;
-        xmlhttp.open("POST","../../../comment/comarticle/"+pk.toString()+"/",true);
-        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xmlhttp.send(postdata);
-        xmlhttp.onreadystatechange=function (ev) {
-            if (xmlhttp.readyState===4 && xmlhttp.status===200){
-                father.innerText=xmlhttp.responseText;
-            }
-        }
-    }
-</script>
-{% endblock %}
+<div class="col-md-4 col-lg-4 col-xl-4 col-sm-12"><!--右边栏-->
+  <div class="col" style="background:url({% static 'resourcesAPP/img/gg_logo.png' %}) no-repeat;background-size: auto; border: #abdde5 1px solid">
+<form role="search" action="https://www.google.com.hk/search" id="search_out_form" target="_blank" method="get">
+  <div class="row"><label for="select"></label><label for="search"></label>
+  <select style="opacity: 0.9" onchange="change(this)" id="select">
+      <option value="google">google</option><option value="baidu">baidu</option></select>
+  <input class="col form-control" style="opacity: 0.9;" type="search" id="search_out" placeholder="站外搜索: 请输入关键词" name="q"/>
+  <button type="submit" class="btn btn-success"> 搜索</button></div>
+</form><br/><br/>
+<form role="search" method="get" action="{% url 'haystack_search' %}" target="_blank">
+  <div class="row"><label for="search_in"></label>
+  <input class="col form-control" style="opacity: 0.9;" type="search" id="search_in" name="q" placeholder="本站内搜索:  请输入关键词" required>
+  <button type="submit" class="btn btn-success" onclick="return search_judge()">搜索</button></div>
+</form></div>
+</div></div><!--/div.row-->
+{% endblock %}{% block script %}
+<script type="text/javascript" src="{% static 'resourcesAPP/js/resource.js' %}"></script>{% endblock %}

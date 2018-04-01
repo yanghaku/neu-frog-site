@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Article, ArticleCategory, Topic
+from .models import Article, ArticleCategory, Topic, BookMark, BookCategory
 from .form import ArticleForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_GET
@@ -9,6 +9,11 @@ from markdown import markdown
 
 def index(request):
     return render(request, 'index.html')
+
+
+# 站内搜索的首页
+def index_search(request):
+    return render(request, 'search/search_index.html')
 
 
 # 文章详情页
@@ -47,7 +52,7 @@ def paste(request):
         return render(request, 'resourcesAPP/paste.html', context={'form': form})
 
 
-# 从目录展示文章列表
+# 从分类展示文章列表
 @require_GET
 def list_cat(request, pk):
     category = get_object_or_404(ArticleCategory, pk=pk)
@@ -63,3 +68,24 @@ def list_top(request, pk):
     article_list = topic.article_set.all()
     context = {'article_list': article_list, 'title': topic.name}
     return render(request, 'resourcesAPP/article_list.html', context)
+
+
+# 文章的分类,话题的列表
+@require_GET
+def category_list(request):
+    return render(request, 'resourcesAPP/category_list.html')
+
+
+# 展示书签的分类列表
+@require_GET
+def bookmark_category_list(request):
+    return render(request, 'resourcesAPP/bookmark_catgory.html', context={'bookmark_category_list': BookCategory.objects.all()})
+
+
+# 展示某个分类下的所有书签
+@require_GET
+def bookmark_list(request, pk):
+    print(pk)
+    mark = get_object_or_404(BookCategory, pk=pk)
+    print(mark)
+    return render(request, 'resourcesAPP/bookmark_list.html', context={'bookmark_list': mark.bookmark_set.all()})

@@ -1,0 +1,85 @@
+<!DOCTYPE html>{% load static %}
+<html lang="zh-cn"><head>
+  <meta charset="utf-8">
+  <!-- 触屏端用的-->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
+  <link rel="icon" href="{% static 'resourcesAPP/img/favicon.ico' %}">
+  <title>{% block title %}{% endblock %}  --书签有路</title>
+  {% block head %}{% endblock %}
+</head><body>
+<div class="container">
+<nav id="top" style="margin: 20px 0">
+<ul class="nav nav-pills nav-justified">
+  <li class="nav-item"><a href="{% url 'index' %}"><i class="fa fa-home fa-2x"></i> 首页</a></li>
+  <li class="nav-item"><a href="{% url 'bookmark_category_list' %}" target="_blank"><i class="fa fa-book fa-2x"></i> 书签大全</a></li>
+  <li class="nav-item"><a href="{% url 'category_list' %}" target="_blank"><i class="fa fa-folder-open fa-2x"></i> 资源平台</a></li>
+  <li class="nav-item"><a href="{% url 'paste' %}" target="_blank" title="去发帖"><i class="fa fa-upload fa-2x"></i> 资源发布</a></li>
+  <li class="nav-item"><a href="{% url 'index_search' %}" target="_blank"><i class="fa fa-search fa-2x"></i> 站内搜索</a></li>
+  <li class="nav-item" ><a href="{% url 'guide' %}" target="_blank"><i class="fa fa-hand-point-right fa-2x"></i> 网站指南</a></li>
+  <li class="nav-item"><a href="{% url 'message' %}" target="_blank"><i class="fa fa-comment-dots fa-2x"></i> 网站留言</a></li>
+  <li class="nav-item">
+    <div class="dropdown">
+    <button class="btn btn-danger btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fa fa-user">user</i><i class="fa fa-caret-down"></i></button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <li class="dropdown-item"></li>
+    {% if user.is_authenticated %}
+      <li class="dropdown-item"><strong>欢迎!{{ user.username }}</strong></li>
+      <li class="dropdown-divider"></li>
+      <li class="dropdown-item"><a href="{% url 'register' %}?next={{ request.path }}"><i class="fa fa-user-plus text-info">注册</i></a><span> | </span><a href="{% url 'password_change' %}?next={{ request.path }}"><i class="fa fa-key">修改密码</i></a></li>
+      <li class="dropdown-item"><a href="{% url 'logout' %}?next={{ request.path }}"><i class="fa fa-sign-out-alt text-danger">注销</i></a></li>
+      <li class="dropdown-item"><a href="{% url 'profiles' %}"><img class="img-thumbnail" src="{{ user.image.url}}" alt="头像"><br/> <i class="fa fa-user-secret">个人中心</i></a></li>
+    {% else %}
+      <li class="dropdown-item"><strong>您还未登录,请登录</strong></li>
+      <li class="dropdown-divider"></li>
+      <li class="dropdown-item"><a href="{% url 'register' %}?next={{ request.path }}"><i class="fa fa-user-plus text-info">注册</i></a></li>
+      <li class="dropdown-item"><a href="{% url 'login' %}?next={{ request.path }}"><i class="fa fa-sign-in-alt text-success">登录</i></a></li>
+      <li class="dropdown-item"><a href="{% url 'password_reset' %}?next={{ request.path }}"><i class="fa fa-user-md">忘记密码?</i></a></li>
+    {% endif %}
+    </ul></div></li>
+</ul></nav>
+{% block main %}{% endblock %}
+<footer class="nav bg-light">
+  <div class="col text-center"><hr/><span>
+    <a href="http://www.neu.edu.cn/" title="东北大学官网" target="_blank">东大官网</a> |
+    <a href="http://sc.neu.edu.cn/" title="东北大学软件学院" target="_blank">东大软件学院</a> |
+    <a href="http://cxzx.neu.edu.cn/HomePage.aspx" title="东大创新网" target="_blank">东大创新网</a> |
+    <a href="http://www.neupioneer.com" title="东北大学团委先锋网" target="_blank">东大先锋网</a> |
+    <a href="http://mirror.neu.edu.cn" title="东北大学开源镜像站" target="_blank">东大镜像站</a> |
+    <a href="https://aao.neu.edu.cn" title="东北大学教务处" target="_blank">东大教务处</a> |
+    <a href="http://search.neu.edu.cn/search.php" title="东北大学校内网站搜索" target="_blank">校内网站搜索</a>
+    </span><address>
+    <a href="{% url 'guide' %}" target="_blank">网站指南</a>
+    <a href="{% url 'message' %}" target="_blank">错误上报</a>
+    <a href="https://github.com/yanghaku/neu-frog-site" target="_blank">Github源码</a>
+    <a href="{% static 'userAPP/img/join_us.jpg' %}" target="_blank">加入我们</a>
+    <strong>Written by <a href="{% url 'about' %}" target="_blank">@neu-frog</a>Version 1.0.0</strong></address>
+  <hr/></div>
+</footer>
+<div id="return_top" style="position:fixed;bottom:4%;right:5%;z-index:999;display:none;background-color: #00aa00;">
+  <a href="#top" title="返回顶部" style="color: white"><i class="fa fa-arrow-circle-up fa-3x"></i></a>
+</div></div><!--/div.container-->{% block script %}{% endblock %}
+<script>
+var timeoutclear;
+window.onscroll=function () {
+    if(timeoutclear){//当滚动频繁时,如果前一次的代码还没有执行,就取消,设置下一次的延时
+        clearTimeout(timeoutclear);
+    }timeoutclear=setTimeout(return_top_display, 80)
+};
+var topp=document.getElementById("return_top");
+function return_top_display(){
+    //console.log(document.documentElement.scrollTop);
+    if(window.document.documentElement.scrollTop>=200){
+        topp.style.display="block";
+    }else{
+        topp.style.display="none";
+    }
+}
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body></html>
