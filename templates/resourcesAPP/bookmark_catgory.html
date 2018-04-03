@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}书签分类{% endblock %}
-{% block main %}<div class="row">
+{% block main %}{% load resourcesAPP_tags %}{% get_book_category as bookmark_category_list %}
+<div class="row">
 <div class="col-md-4 offset-md-4">
 <ul class="list-group"></ul>
     {% for i in bookmark_category_list %}
-        <li class="list-group-item"><a href="{{ i.get_bookmark_list }}">{{ i }}</a></li>
+        <li class="list-group-item"><a href="{{ i.get_bookmark_list }}">{{ i }}</a><small>个数:{{ i.bookmark_num }}</small></li>
     {% empty %}{% endfor %}
 </div></div>
 {% endblock %}

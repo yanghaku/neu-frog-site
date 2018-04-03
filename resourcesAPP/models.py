@@ -23,6 +23,11 @@ class Topic(models.Model):
     def get_absolute_url(self):
         return reverse('article_list_by_topic', kwargs={'pk': self.pk})
 
+    # 浏览量加一
+    def increase_click(self):
+        self.click += 1
+        self.save(update_fields=['click'])
+
     def __str__(self):
         return self.name
 
@@ -57,6 +62,11 @@ class Article(models.Model):
 
     def get_absolute_url(self):
         return reverse('details', kwargs={'pk': self.pk})
+
+    # 增加阅读量
+    def increase_click(self):
+        self.click += 1
+        self.save(update_fields=['click'])
 
 
 # 4.书签所属目录
@@ -97,4 +107,3 @@ class BookMark(models.Model):
 
     def __str__(self):
         return self.title
-

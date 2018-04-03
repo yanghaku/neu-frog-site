@@ -2,6 +2,7 @@
 {% block title %}{{ title }}{% endblock %}
 {% block main %}
 <h1 class="col text-center">{{ title }}</h1>
+    <small>文章个数:{{ article_list|length }}</small>
 <div class="row"><div class="col-md-5 offset-md-3 col-sm-12">
 <ul class="list-group list-unstyled">{% for article in article_list %}
 <li class="list-group-item">

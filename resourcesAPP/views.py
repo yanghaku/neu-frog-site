@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Article, ArticleCategory, Topic, BookMark, BookCategory
+from .models import Article, ArticleCategory, Topic, BookCategory
 from .form import ArticleForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_GET
@@ -25,6 +25,8 @@ def details(request, pk):
     #    'markdown.extensions.extra', 'markdown.extensions.codehilite', 'markdown.extensions.toc',
     # ])
     article.text = markdown(article.text)
+    # 文章浏览量加一
+    article.increase_click()
     return render(request, 'resourcesAPP/details.html', context={'article': article})
 
 
@@ -42,6 +44,9 @@ def paste(request):
             if html:
                 article.text += html.read().decode('utf-8')
             article.save()
+            # 保存后才能添加 多对多 外键
+            for topic in form.cleaned_data['topic']:
+                article.topic.add(topic)
             return redirect(article.get_absolute_url())
         # 表单无效就返回错误表单
         else:
@@ -65,6 +70,8 @@ def list_cat(request, pk):
 @require_GET
 def list_top(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
+    # 浏览量加一
+    topic.increase_click()
     article_list = topic.article_set.all()
     context = {'article_list': article_list, 'title': topic.name}
     return render(request, 'resourcesAPP/article_list.html', context)
@@ -79,13 +86,11 @@ def category_list(request):
 # 展示书签的分类列表
 @require_GET
 def bookmark_category_list(request):
-    return render(request, 'resourcesAPP/bookmark_catgory.html', context={'bookmark_category_list': BookCategory.objects.all()})
+    return render(request, 'resourcesAPP/bookmark_catgory.html')
 
 
 # 展示某个分类下的所有书签
 @require_GET
 def bookmark_list(request, pk):
-    print(pk)
     mark = get_object_or_404(BookCategory, pk=pk)
-    print(mark)
     return render(request, 'resourcesAPP/bookmark_list.html', context={'bookmark_list': mark.bookmark_set.all()})
