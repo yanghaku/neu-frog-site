@@ -11,11 +11,6 @@ def index(request):
     return render(request, 'index.html')
 
 
-# 站内搜索的首页
-def index_search(request):
-    return render(request, 'search/search_index.html')
-
-
 # 文章详情页
 @require_GET
 def details(request, pk):
@@ -77,10 +72,10 @@ def list_top(request, pk):
     return render(request, 'resourcesAPP/article_list.html', context)
 
 
-# 文章的分类,话题的列表
+# 文章的话题的列表
 @require_GET
-def category_list(request):
-    return render(request, 'resourcesAPP/category_list.html')
+def topic_list(request):
+    return render(request, 'resourcesAPP/topic_list.html')
 
 
 # 展示书签的分类列表

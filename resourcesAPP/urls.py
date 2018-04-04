@@ -11,5 +11,5 @@ urlpatterns = [
     re_path(r'^list_top/(?P<pk>[0-9]+)/$', views.list_top, name='article_list_by_topic'),
     re_path(r'^list_book_cat/', views.bookmark_category_list, name='bookmark_category_list'),
     re_path(r'^list_bookmark/(?P<pk>[0-9]+)/$', views.bookmark_list, name='bookmark_list'),
-    re_path(r'category/', views.category_list, name='category_list'),
+    re_path(r'^topic/', views.topic_list, name='topic_list'),
 ]

@@ -7,9 +7,9 @@
 <div class="row">
 <div class="col-md-6 offset-md-3 col-sm-12" style="background:url({% static 'resourcesAPP/img/gg_logo.png' %}) no-repeat;background-size: auto; border: #abdde5 1px solid">
 <form role="search" action="https://www.google.com.hk/search" id="search_out_form" target="_blank" method="get">
-  <div class="row"><label for="select"></label><label for="search"></label>
+  <div class="row"><label for="select"></label><label for="search_out"></label>
   <select style="opacity: 0.9" onchange="change(this)" id="select">
-      <option value="google">google</option><option value="baidu">baidu</option></select>
+    <option value="google">google</option><option value="baidu">baidu</option></select>
   <input class="col form-control" style="opacity: 0.9;" type="search" id="search_out" placeholder="站外搜索: 请输入关键词" name="q"/>
   <button type="submit" class="btn btn-success"> 搜索</button></div>
 </form><br/><br/>
@@ -17,24 +17,23 @@
   <div class="row"><label for="search_in"></label>
   <input class="col form-control" style="opacity: 0.9;" type="search" id="search_in" name="q" placeholder="本站内搜索:  请输入关键词" required>
   <button type="submit" class="btn btn-success" onclick="return search_judge()">搜索</button></div>
-</form></div>
-</div>
-
-<div class="row">
-<div class="col-md-8" style="background: url({% static 'resourcesAPP/img/bg.png' %})no-repeat;background-size: contain">
-</div>
-<div class="col"><hr/>
-{% get_category as category %}
-<ul class="list-group list-unstyled">
-<li class="list-group-item-primary">文章分类:</li>
-{% for i in category%}
-    <li class="list-group-item"><a href="{{ i.get_absolute_url }}">{{ i }}</a></li>
-{% empty %}{% endfor %}</ul><hr/>
-{% get_all_topic as topic %}
+</form></div></div>
+<div class="row"><div class="col-md-8">{% get_book_category as bookmark_category_list %}
+{% for bookmark_category in bookmark_category_list %}
+<div class="col-4">
+<ul class="list-group">{% get_bookmark bookmark_category as bookmark_list %}
+{% for bookmark in bookmark_list %}
+  <li class="list-group-item"><a href="{{ bookmark.url }}"><img width="50" src="{% if bookmark.img %}{{ bookmark.img.url }}{% endif %}" class="img-fluid" alt="{{ bookmark }}"> {{ bookmark }}</a></li>
+{% endfor %}
+</ul></div>{% empty %}{% endfor %}
+</div>{% get_all_topic as topic %}
+<div class="col-md-4">
 <ul class="list-group list-unstyled">
 <li class="list-group-item-primary"><strong>话题:</strong></li>
 {% for i in topic %}
   <li class="list-group-item"><a href="{{ i.get_absolute_url }}">{{ i }}</a><span>文章数:{{ i.count }} 浏览量:{{ i.click }}</span></li>
-{% empty %}{% endfor %}</ul>
+{% empty %}{% endfor %}
+<li class="list-item text-right"><a href="{% url 'topic_list' %}"><i class="fa fa-angle-double-right">更多</i></a></li></ul>
 </div></div>{% endblock %}
-{% block script %}<script type="text/javascript" src="{% static 'resourcesAPP/js/resource.js' %}"></script>{% endblock %}
+{% block script %}<script>window.onload=function () { document.getElementById("home").className="nav-item active"; }</script>
+<script type="text/javascript" src="{% static 'resourcesAPP/js/resource.js' %}"></script>{% endblock %}

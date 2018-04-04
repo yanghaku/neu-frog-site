@@ -1,30 +1,31 @@
-<!DOCTYPE html>{% load static %}
-<html lang="zh-cn"><head>
+<!DOCTYPE html>{% load static %}{% load resourcesAPP_tags %}
+<html lang="zh-cn"><head>{% get_category as category_list %}
   <meta charset="utf-8">
-  <!-- 触屏端用的-->
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <!-- 触屏端用的--><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS --><link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
   <link rel="icon" href="{% static 'resourcesAPP/img/favicon.ico' %}">
-  <title>{% block title %}{% endblock %}  --书签有路</title>
-  {% block head %}{% endblock %}
+  <title>{% block title %}{% endblock %}  --书签有路</title>{% block head %}{% endblock %}
 </head><body>
 <div class="container">
-<nav id="top" style="margin: 20px 0">
-<ul class="nav nav-pills nav-justified">
-  <li class="nav-item"><a href="{% url 'index' %}"><i class="fa fa-home fa-2x"></i> 首页</a></li>
-  <li class="nav-item"><a href="{% url 'bookmark_category_list' %}" target="_blank"><i class="fa fa-book fa-2x"></i> 书签大全</a></li>
-  <li class="nav-item"><a href="{% url 'category_list' %}" target="_blank"><i class="fa fa-folder-open fa-2x"></i> 资源平台</a></li>
-  <li class="nav-item"><a href="{% url 'paste' %}" target="_blank" title="去发帖"><i class="fa fa-upload fa-2x"></i> 资源发布</a></li>
-  <li class="nav-item"><a href="{% url 'index_search' %}" target="_blank"><i class="fa fa-search fa-2x"></i> 站内搜索</a></li>
-  <li class="nav-item" ><a href="{% url 'guide' %}" target="_blank"><i class="fa fa-hand-point-right fa-2x"></i> 网站指南</a></li>
-  <li class="nav-item"><a href="{% url 'message' %}" target="_blank"><i class="fa fa-comment-dots fa-2x"></i> 网站留言</a></li>
-  <li class="nav-item">
-    <div class="dropdown">
-    <button class="btn btn-danger btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <i class="fa fa-user">user</i><i class="fa fa-caret-down"></i></button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+<nav id="top" class="navbar navbar-expand navbar-light justify-content-between bg-light">
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+<ul class="navbar-nav mr-auto">
+  <li class="nav-item" id="home"><a class="nav-link" href="{% url 'index' %}"><i class="fa fa-home fa-2x"></i> 首页</a></li>
+  <li class="nav-item" id="bookmark"><a class="nav-link" href="{% url 'bookmark_category_list' %}" target="_blank"><i class="fa fa-book fa-2x"></i> 书签大全</a></li>
+  <li class="nav-item dropdown" id="article">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="navbar_menu" aria-haspopup="true" aria-expanded="false" href="#"><i class="fa fa-folder-open fa-2x"></i> 资源平台</a>
+    <div class="dropdown-menu" aria-labelledby="navbar_menu">{% for i in category_list %}
+      <a class="dropdown-item" href="{{ i.get_absolute_url }}">{{ i }}  <span class="badge badge-primary">{{ i.article_num }}</span></a>{% endfor %}
+    </div>
+  </li>
+  <li class="nav-item" id="paste"><a class="nav-link" href="{% url 'paste' %}" target="_blank" title="去发帖"><i class="fa fa-upload fa-2x"></i> 资源发布</a></li>
+  <li class="nav-item" id="guide"><a class="nav-link" href="{% url 'guide' %}" target="_blank"><i class="fa fa-hand-point-right fa-2x"></i> 网站指南</a></li>
+  <li class="nav-item" id="message"><a class="nav-link" href="{% url 'message' %}" target="_blank"><i class="fa fa-comment-dots fa-2x"></i> 网站留言</a></li>
+  <li class="nav-item dropdown" role="presentation">
+    <a class="dropdown-toggle nav-link" data-toggle="dropdown" id="navbarDropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+    <i class="fa fa-user fa-2x"></i> user</a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
     <li class="dropdown-item"></li>
     {% if user.is_authenticated %}
       <li class="dropdown-item"><strong>欢迎!{{ user.username }}</strong></li>
@@ -39,8 +40,15 @@
       <li class="dropdown-item"><a href="{% url 'login' %}?next={{ request.path }}"><i class="fa fa-sign-in-alt text-success">登录</i></a></li>
       <li class="dropdown-item"><a href="{% url 'password_reset' %}?next={{ request.path }}"><i class="fa fa-user-md">忘记密码?</i></a></li>
     {% endif %}
-    </ul></div></li>
-</ul></nav>
+    </ul></li>
+  <li class="nav-item">
+    <form class="form-inline my-2 pt-2 my-lg-0" role="search" method="get" action="{% url 'haystack_search' %}">
+    <div class="form-group">
+    <input class="form-control mr-sm-2" type="search" id="search_nav" name="q" placeholder=" 搜你想要的 " required>
+    </div>
+    <button type="submit" class="btn btn-outline-success my-2 my-sm-0" onclick="return search_judge()">搜索</button>
+  </form></li>
+</ul></div></nav>
 {% block main %}{% endblock %}
 <footer class="nav bg-light">
   <div class="col text-center"><hr/><span>

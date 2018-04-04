@@ -1,15 +1,8 @@
 {% extends 'base.html' %}{% block main %}
 {% load static %}{% load resourcesAPP_tags %}
-{% get_category as category_list %}{% get_all_topic as topic_list %}
+{% get_all_topic as topic_list %}
 <div class="row">
 <div class="col-sm-12 col-md-6">
-  <ul class="list-group list-unstyled">
-<li class="list-group-item-primary">文章分类:</li>
-{% for category in category_list %}
-  <li class="list-group-item"><a href="{{ category.get_absolute_url }}">{{ category }}</a>
-  <span>文章数: {{ category.article_num }}</span></li>
-{% empty %}{% endfor %}</ul><hr/>
-</div><div class="col-sm-12 col-md-6">
   <ul class="list-group list-unstyled">
   <li class="list-group-item-primary"><strong>话题:</strong></li>
   {% for topic in topic_list %}

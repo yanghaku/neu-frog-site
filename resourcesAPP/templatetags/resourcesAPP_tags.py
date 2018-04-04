@@ -25,3 +25,9 @@ def get_topic(article):
 @register.simple_tag
 def get_book_category():
     return BookCategory.objects.annotate(bookmark_num=Count('bookmark'))
+
+
+@register.simple_tag
+def get_bookmark(category):
+    return category.bookmark_set.all()[:20]
+

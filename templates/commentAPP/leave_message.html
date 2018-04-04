@@ -45,5 +45,7 @@
   {% empty %}{% endfor %}
 </div></div><hr/>
 {% endblock %}
-{% block script %}<script type="text/javascript" src="{% static 'commentAPP/js/message.js' %}"></script>{% endblock %}
+{% block script %}<script>window.onload=m();
+function m() { document.getElementById("message").className="nav-item active";}</script>
+<script type="text/javascript" src="{% static 'commentAPP/js/message.js' %}"></script>{% endblock %}
 

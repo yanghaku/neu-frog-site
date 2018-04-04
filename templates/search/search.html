@@ -20,7 +20,7 @@
   <button type="submit" class="btn btn-success" onclick="return search_judge()">搜索</button></div>
 </form></div>
 {% if query %}
-    <small class="text-danger">结果数:{{ query|length }}</small>
+    <small class="text-danger">结果数:{{ page|length }}</small>
   <ul class="list-group">
   {% for result in page.object_list %}<li class="list-group-item">
   <h4><a href="{{ result.object.url}}">{% highlight result.object.title with query %}</a></h4>
