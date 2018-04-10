@@ -149,5 +149,5 @@ EMAIL_HOST = 'smtp.163.com'  # 主机
 # 注意 Port
 EMAIL_PORT = 465   # 端口
 EMAIL_HOST_USER = ''  # 帐号
-EMAIL_HOST_PASSWORD = '' # 密码
+EMAIL_HOST_PASSWORD = ''  # 密码
 DEFAULT_FROM_EMAIL = r'neu-frog团队 <>'
