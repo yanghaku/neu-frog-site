@@ -29,5 +29,5 @@ def get_book_category():
 
 @register.simple_tag
 def get_bookmark(category):
-    return category.bookmark_set.all()[:20]
+    return category.bookmark_set.all()[:8]
 
