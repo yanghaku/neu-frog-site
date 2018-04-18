@@ -39,6 +39,9 @@ def paste(request):
             if html:
                 article.text += html.read().decode('utf-8')
             article.save()
+            # 用户贡献值+20
+            request.user.contribute += 20
+            request.user.save(update_fields=['contribute'])
             # 保存后才能添加 多对多 外键
             for topic in form.cleaned_data['topic']:
                 article.topic.add(topic)

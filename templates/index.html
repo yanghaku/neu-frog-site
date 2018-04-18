@@ -6,7 +6,7 @@
 {% endblock %}{% block main %}
 <div class="row" style="margin-top: 30px"><div class="col-md-9">{% get_book_category as bookmark_category_list %}
 <div class="row">{% for bookmark_category in bookmark_category_list %}
-<div class="col-3">
+<div class="col-4">
 <ul class="list-group">{% get_bookmark bookmark_category as bookmark_list %}
 <li class="list-group-item bg-light">{{ bookmark_category }}</li>
 {% for bookmark in bookmark_list %}

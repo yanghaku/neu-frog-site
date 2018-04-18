@@ -8,4 +8,4 @@
 python第三方库有:haystack jieba中文分词  markdown
 
 
-正在完善中.......
+具体请看: [guide](http://39.107.69.59/comment/guide/)

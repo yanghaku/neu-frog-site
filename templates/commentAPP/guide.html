@@ -1,4 +1,5 @@
-{% extends 'base.html' %}
-{% block title %}网站指南{% endblock %}{% block main %}
-<h1>Guide</h1>{% endblock %}
+{% extends 'base.html' %}{% load static %}
+{% block title %}网站指南{% endblock %}{% block main %}<div class="row"><div class="col-12">
+    <embed id="pdfPlayer" src="{% static 'commentAPP/guide.pdf'%}" type="application/pdf" width="99%" height="1000px"></div></div>
+{% endblock %}
 {% block script %}<script>window.onload=function () { document.getElementById("guide").className="nav-item active"; }</script>{% endblock %}
