@@ -28,6 +28,7 @@ from resourcesAPP import views as re_view
 
 # url是顺序匹配的,像顺序查找,因此要把访问多的放在前面, 除了首页,都是载入的二级路由
 urlpatterns = [
+    path('questions/', include('questionnaire.urls')),
     # 主页的url
     path('', re_view.index, name='index'),
     # 搜索模块的url

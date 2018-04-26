@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'resourcesAPP.apps.ResourcesappConfig',
     'commentAPP.apps.CommentappConfig',
     'haystack',
+    'questionnaire.apps.QuestionnaireConfig',
 ]
 
 MIDDLEWARE = [

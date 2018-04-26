@@ -1,0 +1,49 @@
+<!DOCTYPE html>{% load static %}{% load resourcesAPP_tags %}
+<html lang="zh-cn"><head>{% get_category as category_list %}
+  <meta charset="utf-8">
+  <!-- 触屏端用的--><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS --><link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
+  <link rel="icon" href="{% static 'resourcesAPP/img/neu.ico' %}">
+  <title>皮皮问卷</title>
+</head><body>
+<div class="container">
+<div class="row"><div class="col-md-8 offset-md-2 col-sm-12">
+<h1 id="top" class="h1 text-center" style="margin: 1em">皮皮问卷</h1>
+ <form id="form" class="form-group" method="post" action="{% url 'question' %}">{% csrf_token %}
+   <label for="id_name">姓名</label>{{ form.name }}<small class="danger">{{ form.name.errors }}</small>
+   <label for="id_sex">性别</label>{{ form.sex }}<small class="danger">{{ form.sex.errors }}</small>
+   <label for="id_age">年龄</label>{{ form.age }}<small class="danger">{{ form.age.errors }}</small>
+   <label for="id_school">学校</label>{{ form.school }}<small class="danger">{{ form.school.errors }}</small>
+   <label for="id_email">电子邮箱</label>{{ form.email }}<small class="danger">{{ form.email.errors }}</small>
+ </form>
+ <div class="col text-center"><button form="form" class="btn btn-success" type="submit">Submit</button></div>
+</div></div>
+<div id="return_top" style="position:fixed;bottom:4%;right:5%;z-index:999;display:none;background-color: #00aa00;">
+  <a href="#top" title="返回顶部" style="color: white"><i class="fa fa-arrow-circle-up fa-3x"></i></a>
+</div></div><!--/div.container-->
+<script>
+var timeoutclear;
+window.onscroll=function () {
+    if(timeoutclear){//当滚动频繁时,如果前一次的代码还没有执行,就取消,设置下一次的延时
+        clearTimeout(timeoutclear);
+    }timeoutclear=setTimeout(return_top_display, 80)
+};
+var topp=document.getElementById("return_top");
+function return_top_display(){
+    //console.log(document.documentElement.scrollTop);
+    if(window.document.documentElement.scrollTop>=200){
+        topp.style.display="block";
+    }else{
+        topp.style.display="none";
+    }
+}
+window.onload = function () {
+    document.getElementById("id_name").className="form-control";
+    document.getElementById("id_sex").className="form-control";
+    document.getElementById("id_age").className="form-control";
+    document.getElementById("id_school").className="form-control";
+    document.getElementById("id_email").className="form-control";
+}
+</script>
+</body></html>

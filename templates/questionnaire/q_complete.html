@@ -1,0 +1,21 @@
+<!DOCTYPE html>{% load static %}{% load resourcesAPP_tags %}
+<html lang="zh-cn"><head>{% get_category as category_list %}
+  <meta charset="utf-8">
+  <!-- 触屏端用的--><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS --><link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
+  <link rel="icon" href="{% static 'resourcesAPP/img/neu.ico' %}">
+  <title>皮皮问卷</title>
+</head><body>
+<div class="container"><div class="row"><div class="col text-center">
+  <h1 class="h1" style="margin: 1em">提交成功!<br/>感谢您的填写!</h1>
+  <button class="btn btn-danger" onclick="close()">关闭</button>
+</div></div></div><!--/div.container-->
+<script>
+    function close() {
+        window.opener=null;
+        window.open('','_self');
+        window.close();
+    }
+</script>
+</body></html>
